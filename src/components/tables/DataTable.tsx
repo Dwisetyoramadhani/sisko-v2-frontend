@@ -29,8 +29,8 @@ export function DataTable<Row>({
         <tbody>
           {rows.map((row, index) => (
             <tr key={rowKey(row, index)}>
-              {columns.map((column) => <td key={column.key}>{column.render(row)}</td>)}
-              {actions && <td>{actions(row)}</td>}
+              {columns.map((column) => <td key={column.key} data-label={column.label}>{column.render(row)}</td>)}
+              {actions && <td data-label="Aksi">{actions(row)}</td>}
             </tr>
           ))}
         </tbody>

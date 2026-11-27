@@ -1,6 +1,8 @@
 import axios, { AxiosError } from 'axios'
 
-export const api = axios.create({ baseURL: `${import.meta.env.VITE_API_BASE_URL || ''}/api/v1`, withCredentials: true, withXSRFToken: true, headers: { Accept: 'application/json' } })
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '')
+export const apiOrigin = (import.meta.env.VITE_API_ORIGIN || apiBaseUrl).replace(/\/+$/, '')
+export const api = axios.create({ baseURL: `${apiBaseUrl}/api/v1`, withCredentials: true, withXSRFToken: true, headers: { Accept: 'application/json' } })
 
 export function errorMessage(error: unknown) {
   if (axios.isAxiosError(error)) {
@@ -11,6 +13,7 @@ export function errorMessage(error: unknown) {
     if (e.response?.status === 409) return e.response.data?.message || 'Perubahan bertentangan dengan data yang ada.'
     if (e.response?.status === 422) return Object.values(e.response.data?.errors || {}).flat().join(' ')
     if (e.response?.status === 429) return 'Terlalu banyak permintaan. Coba kembali sebentar lagi.'
+    if (e.response?.status && e.response.status >= 500) return 'Server sedang mengalami gangguan. Silakan coba kembali beberapa saat lagi.'
     return e.response?.data?.message || 'Terjadi gangguan saat memuat data.'
   }
   return 'Terjadi gangguan saat memuat data.'
